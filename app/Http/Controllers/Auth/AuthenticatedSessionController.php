@@ -28,7 +28,21 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Logika Pengalihan Berdasarkan Role
+        $role = Auth::user()->role;
+
+        switch ($role) {
+            case 'bapendik':
+                return redirect()->route('bapendik.dashboard');
+            case 'dosen':
+                return redirect()->route('dosen.dashboard');
+            case 'mahasiswa':
+                return redirect()->route('mahasiswa.dashboard');
+            default:
+                Auth::logout();
+                return redirect('/login')->with('error', 'Role tidak valid.');
+        }
+//        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**
